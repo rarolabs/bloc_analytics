@@ -1,0 +1,13 @@
+targets:
+  analytics_builder:analytics_builder:
+    builders:
+      analytics_builder|analyticsBuilder:
+        enabled: True
+
+builders:
+  analyticsBuilder:
+    import: 'package:analytics_builder/analytics_generator.dart'
+    builder_factories: ['analyticsBuilder']
+    build_extensions: { ".dart": [".analytics.dart"] }
+    build_to: source
+    auto_apply: dependents
