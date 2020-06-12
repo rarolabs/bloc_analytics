@@ -15,6 +15,7 @@ class FactoryVisitor extends SimpleElementVisitor {
   final Element element;
   Kind kind;
   String blocName;
+  int total = 0;
 
   FactoryVisitor(this.element) {
     _parseBlocName(element);
@@ -56,11 +57,13 @@ class FactoryVisitor extends SimpleElementVisitor {
           specs: specs,
           globals: globals,
           dispatchKind: kind == Kind.State ? "State" : "Event",
-          blocName: blocName)
+          blocName: blocName,
+          total: total)
       .toDart();
 
   @override
   visitConstructorElement(ConstructorElement element) {
+    total++;
     for (ElementAnnotationImpl annotation in element.metadata) {
       var ast = annotation.annotationAst as AnnotationImpl;
       if (ast.name?.name == "AnalyticAction") {

@@ -5,9 +5,10 @@ class DispatchTemplate {
   final Map<String, String> globals;
   final String dispatchKind;
   final String blocName;
+  final int total;
 
   DispatchTemplate(
-      {this.specs, this.globals, this.dispatchKind, this.blocName});
+      {this.specs, this.globals, this.dispatchKind, this.blocName, this.total});
 
   String toDart() {
     return '''
@@ -18,21 +19,20 @@ Map<String,String> _dispatch$dispatchKind($blocName$dispatchKind ${dispatchKind.
   }
 
   String _dispatch(List<AnalyticSpec> specs, String varName) {
-    switch (specs.length) {
-      case 0:
-        return "return null;";
-      case 1:
-        return '''
+    if (total == 0) {
+      return "return null;";
+    } else if (total == 1 && specs.length == 1) {
+      return '''
           Map<String,String> payload = {
+            \"id\": \"${specs[0].id}\",
             ${_varsTemplate(specs[0].dynamicProperties, specs[0].properties, prefix: varName)}
           };
           return payload;
         ''';
-      default:
-        final String _specs =
-            specs.map((e) => _specsTemplate(e)).join("\n    ");
+    } else {
+      final String _specs = specs.map((e) => _specsTemplate(e)).join("\n    ");
 
-        return '''
+      return '''
         final payload = $varName.maybeWhen(
           orElse:() => null,
           $_specs
